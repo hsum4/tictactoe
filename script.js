@@ -18,9 +18,11 @@ function Gameboard() {
     function placeMarker(row, column, symbol) {
         if (board[row][column] == ""){
             board[row][column] = symbol;
+            return true;
         }
         else{
-            console.log("position already taken")
+            console.log("position already taken");
+            return false;
         }
     }
 
@@ -45,9 +47,60 @@ function GameController() {
         CurrentPlayer = CurrentPlayer === 0 ? 1 : 0;
     }
 
+    function checkWin() {
+        let b = board.getBoard();
+
+        for (let i=0; i < 3; i++) {
+            if (b[i][0] && b[i][0] === b[i][1] && b[i][1] === b[i][2]) {
+                return b[i][0];
+            }
+        }
+
+        for (let j=0; j < 3; j++) {
+            if (b[0][j] && b[0][j] === b[1][j] && b[1][j] === b[2][j]) {
+                return b[0][j];
+            }
+        }
+
+        if (b[0][0] && b[0][0] === b[1][1] && b[1][1] === b[2][2]) {
+            return b[0][0];
+        }
+        if (b[0][2] && b[0][2] === b[1][1] && b[1][1] === b[2][0]) {
+            return b[0][2];
+        }
+
+        return null;
+    }
+
+    function checkTie() {
+        let b = board.getBoard();
+
+        for (let i=0; i<b.length; i++) {
+            for (let j=0; j<b[i].length; j++){
+                if(b[i][j] === ""){
+                    return null;
+                }
+            }
+        }
+
+        return true;
+    }
+
     function playTurn(row, column) {
-        if (board.placeMarker(row, column, getCurrentPlayer().marker)){
-            console.log(`${getCurrentPlayer().name} placed ${getCurrentPlayer().marker} at (${row}, ${column})`);
+        if(!board.placeMarker(row, column, getCurrentPlayer().marker)){
+            return;
+        }
+
+        const winner = checkWin();
+        if(winner) {
+            console.log(`${getCurrentPlayer().name} wins!`);
+            return;
+        }
+
+        const tie = checkTie()
+        if (tie){
+            console.log("It's a tie!");
+            return;
         }
 
         switchTurn();
