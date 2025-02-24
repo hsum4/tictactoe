@@ -110,4 +110,46 @@ function GameController() {
 
 }
 
+function DisplayController(game){
+    const boardElement = document.querySelector(".board");
+    const messageElement = document.querySelector("h1");
+
+    function renderBoard(){
+        boardElement.innerHTML = "";
+        const board = game.getBoard();
+
+        board.forEach((row,i) => {
+            row.forEach((cell,j) => {
+               const cellElement = document.createElement("div");
+               cellElement.classList.add("cell");
+               cellElement.dataset.row = i;
+               cellElement.dataset.column = j;
+               cellElement.textContent=cell;
+
+                if (cell !== "") {
+                    cellElement.classList.add("taken");
+                }
+
+                cellElement.addEventListener("click", handleCellClick);
+                boardElement.appendChild(cellElement);
+
+            });
+        });
+
+    }
+
+    function handleCellClick(event) {
+        const row = event.target.dataset.row;
+        const column = event.target.dataset.column;
+
+        game.playTurn(parseInt(row), parseInt(column));
+        renderBoard();
+    }
+
+    return {renderBoard};
+}
+
 const game = GameController();
+const display = DisplayController(game);
+
+display.renderBoard();
