@@ -15,9 +15,9 @@ function Gameboard() {
         return board;
     }
 
-    function placeMarker(array, row, column, symbol) {
-        if (array[row][column] == ""){
-            array[row][column] = symbol;
+    function placeMarker(row, column, symbol) {
+        if (board[row][column] == ""){
+            board[row][column] = symbol;
         }
         else{
             console.log("position already taken")
@@ -27,4 +27,34 @@ function Gameboard() {
     return { getBoard, placeMarker }
 }
 
-const game = Gameboard();
+function GameController() {
+    const board = new Gameboard();
+
+    const players = [
+        { name: "Player 1", marker: "X"},
+        { name: "Player 2", marker: "O"}
+    ]
+
+    let CurrentPlayer = 0;
+
+    function getCurrentPlayer() {
+        return players[CurrentPlayer];
+    }
+
+    function switchTurn() {
+        CurrentPlayer = CurrentPlayer === 0 ? 1 : 0;
+    }
+
+    function playTurn(row, column) {
+        if (board.placeMarker(row, column, getCurrentPlayer().marker)){
+            console.log(`${getCurrentPlayer().name} placed ${getCurrentPlayer().marker} at (${row}, ${column})`);
+        }
+
+        switchTurn();
+    }
+
+    return { playTurn, getCurrentPlayer, getBoard: board.getBoard };
+
+}
+
+const game = GameController();
