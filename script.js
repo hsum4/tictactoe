@@ -30,7 +30,8 @@ function Gameboard() {
 }
 
 function GameController() {
-    const board = new Gameboard();
+    const {getBoard, placeMarker} = Gameboard();
+    let isGameOver = false;
 
     const players = [
         { name: "Player 1", marker: "X"},
@@ -48,7 +49,7 @@ function GameController() {
     }
 
     function checkWin() {
-        let b = board.getBoard();
+        let b = getBoard();
 
         for (let i=0; i < 3; i++) {
             if (b[i][0] && b[i][0] === b[i][1] && b[i][1] === b[i][2]) {
@@ -73,7 +74,7 @@ function GameController() {
     }
 
     function checkTie() {
-        let b = board.getBoard();
+        let b = getBoard();
 
         for (let i=0; i<b.length; i++) {
             for (let j=0; j<b[i].length; j++){
@@ -87,32 +88,41 @@ function GameController() {
     }
 
     function playTurn(row, column) {
-        if(!board.placeMarker(row, column, getCurrentPlayer().marker)){
+        if (!isGameOver) {
+            if(!placeMarker(row, column, getCurrentPlayer().marker)){
+                return;
+            }
+    
+            const winner = checkWin();
+            if(winner) {
+                console.log(`${getCurrentPlayer().name} wins!`);
+                isGameOver = true;
+                return winner;
+            }
+    
+            const tie = checkTie()
+            if (tie){
+                console.log("It's a tie!");
+                isGameOver = true;
+                return tie;
+            }
+            switchTurn();
+        }
+        else {
             return;
         }
-
-        const winner = checkWin();
-        if(winner) {
-            console.log(`${getCurrentPlayer().name} wins!`);
-            return;
-        }
-
-        const tie = checkTie()
-        if (tie){
-            console.log("It's a tie!");
-            return;
-        }
-
-        switchTurn();
+        
     }
 
-    return { playTurn, getCurrentPlayer, getBoard: board.getBoard };
+    return { playTurn, getCurrentPlayer, getBoard };
 
 }
 
 function DisplayController(game){
     const boardElement = document.querySelector(".board");
-    const messageElement = document.querySelector("h1");
+    const resultElement = document.querySelector("#result");
+
+    resultElement.style.display = "none";
 
     function renderBoard(){
         boardElement.innerHTML = "";
@@ -142,8 +152,20 @@ function DisplayController(game){
         const row = event.target.dataset.row;
         const column = event.target.dataset.column;
 
-        game.playTurn(parseInt(row), parseInt(column));
-        renderBoard();
+        result = game.playTurn(parseInt(row), parseInt(column));
+
+        event.target.textContent = game.getBoard()[row][column];
+        event.target.classList.add("taken");
+             
+        if(result === "X" || result === "O"){
+            winner = game.getCurrentPlayer().marker === result ? game.getCurrentPlayer().name : "Player 2";
+            resultElement.style.display = "block";
+            resultElement.textContent = `the winner is ${winner}`;
+        }
+        else if (result === true){
+            resultElement.style.display = "block";
+            resultElement.textContent = "its a tie";
+        }
     }
 
     return {renderBoard};
