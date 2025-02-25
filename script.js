@@ -3,13 +3,17 @@ function Gameboard() {
     const rows = 3;
     const cols = 3;
 
-    //create a table based on the rows and columns
-    for (let i = 0; i < rows; i++){
-        board[i] = []
-        for ( let j = 0; j < cols; j++){
-            board[i].push("");
+    //initialize
+    function initializeBoard() {
+        for (let i = 0; i < rows; i++){
+            board[i] = []
+            for ( let j = 0; j < cols; j++){
+                board[i].push("");
+            }
         }
     }
+
+    initializeBoard();
 
     function getBoard() {
         return board;
@@ -26,11 +30,13 @@ function Gameboard() {
         }
     }
 
-    return { getBoard, placeMarker }
+    return { initializeBoard, getBoard, placeMarker }
 }
 
 function GameController() {
-    const {getBoard, placeMarker} = Gameboard();
+    const resetBtn = document.querySelector("button");
+    const {initializeBoard, getBoard, placeMarker} = Gameboard();
+    const resultElement = document.querySelector("#result");    
     let isGameOver = false;
 
     const players = [
@@ -111,8 +117,17 @@ function GameController() {
         else {
             return;
         }
-        
     }
+
+    function resetGame(){
+        initializeBoard();
+        isGameOver = false;
+        CurrentPlayer = 0;
+        display.renderBoard();
+        resultElement.style.display = "none";
+    }
+
+    resetBtn.addEventListener("click", resetGame);
 
     return { playTurn, getCurrentPlayer, getBoard };
 
