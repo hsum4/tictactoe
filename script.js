@@ -57,26 +57,25 @@ function GameController() {
     function checkWin() {
         let b = getBoard();
 
-        for (let i=0; i < 3; i++) {
-            if (b[i][0] && b[i][0] === b[i][1] && b[i][1] === b[i][2]) {
-                return b[i][0];
-            }
-        }
+        const winPatterns = [
+        [[0,0], [0,1], [0,2]],  
+        [[1,0], [1,1], [1,2]],  
+        [[2,0], [2,1], [2,2]],
 
-        for (let j=0; j < 3; j++) {
-            if (b[0][j] && b[0][j] === b[1][j] && b[1][j] === b[2][j]) {
-                return b[0][j];
-            }
-        }
-
-        if (b[0][0] && b[0][0] === b[1][1] && b[1][1] === b[2][2]) {
-            return b[0][0];
-        }
-        if (b[0][2] && b[0][2] === b[1][1] && b[1][1] === b[2][0]) {
-            return b[0][2];
-        }
-
-        return null;
+        [[0,0], [1,0], [2,0]],
+        [[0,1], [1,1], [2,1]],
+        [[0,2], [1,2], [2,2]],
+        
+        [[0,0], [1,1], [2,2]],  
+        [[0,2], [1,1], [2,0]]   
+    ];
+    
+    for (const pattern of winPatterns) {
+        const [a, b, c] = pattern.map(([r, c]) => getBoard()[r][c]);
+        if (a && a === b && b === c) return a;
+    }
+    
+    return null;
     }
 
     function checkTie() {
@@ -85,7 +84,7 @@ function GameController() {
         for (let i=0; i<b.length; i++) {
             for (let j=0; j<b[i].length; j++){
                 if(b[i][j] === ""){
-                    return null;
+                    return false;
                 }
             }
         }
@@ -167,13 +166,13 @@ function DisplayController(game){
         const row = event.target.dataset.row;
         const column = event.target.dataset.column;
 
-        result = game.playTurn(parseInt(row), parseInt(column));
+        let result = game.playTurn(parseInt(row), parseInt(column));
 
         event.target.textContent = game.getBoard()[row][column];
         event.target.classList.add("taken");
              
         if(result === "X" || result === "O"){
-            winner = game.getCurrentPlayer().marker === result ? game.getCurrentPlayer().name : "Player 2";
+            const winner = result === "X" ? "Player 1" : "Player 2";
             resultElement.style.display = "block";
             resultElement.textContent = `the winner is ${winner}`;
         }
