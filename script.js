@@ -38,13 +38,16 @@ function GameController() {
     const {initializeBoard, getBoard, placeMarker} = Gameboard();
     const resultElement = document.querySelector("#result");    
     let isGameOver = false;
+    let CurrentPlayer = 0;
 
     const players = [
         { name: "Player 1", marker: "X"},
         { name: "Player 2", marker: "O"}
     ]
 
-    let CurrentPlayer = 0;
+    function getIsGameOver() {
+        return isGameOver;
+    }
 
     function getCurrentPlayer() {
         return players[CurrentPlayer];
@@ -126,7 +129,7 @@ function GameController() {
 
     resetBtn.addEventListener("click", resetGame);
 
-    return { playTurn, getCurrentPlayer, getBoard };
+    return { playTurn, getCurrentPlayer, getBoard, getIsGameOver };
 
 }
 
@@ -136,11 +139,19 @@ function DisplayController(game){
 
     resultElement.style.display = "none";
 
+    
     boardElement.addEventListener("click", (event) => {
-        if (event.target.classList.contains("cell")) {
-            handleCellClick(event)
+        if(game.getIsGameOver() == false){
+            if (event.target.classList.contains("cell")) {
+                handleCellClick(event)
+            }
+        }
+        else {
+            //console.log("games over bud");
+            // to do: add visual indicator
         }
     })
+    
 
     function renderBoard(){
         boardElement.innerHTML = "";
