@@ -55,8 +55,6 @@ function GameController() {
     }
 
     function checkWin() {
-        let b = getBoard();
-
         const winPatterns = [
         [[0,0], [0,1], [0,2]],  
         [[1,0], [1,1], [1,2]],  
@@ -160,7 +158,6 @@ function DisplayController(game){
                     cellElement.classList.add("taken");
                 }
 
-                // cellElement.addEventListener("click", handleCellClick);
                 boardElement.appendChild(cellElement);
 
             });
