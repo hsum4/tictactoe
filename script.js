@@ -138,6 +138,12 @@ function DisplayController(game){
 
     resultElement.style.display = "none";
 
+    boardElement.addEventListener("click", (event) => {
+        if (event.target.classList.contains("cell")) {
+            handleCellClick(event)
+        }
+    })
+
     function renderBoard(){
         boardElement.innerHTML = "";
         const board = game.getBoard();
@@ -154,7 +160,7 @@ function DisplayController(game){
                     cellElement.classList.add("taken");
                 }
 
-                cellElement.addEventListener("click", handleCellClick);
+                // cellElement.addEventListener("click", handleCellClick);
                 boardElement.appendChild(cellElement);
 
             });
